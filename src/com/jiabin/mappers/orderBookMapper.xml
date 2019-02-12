@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiabin.dao.OrderBookDao">
+
+	<resultMap type="OrderBook" id="OrderBookResult">
+		<result property="id" column="id"/>
+		<result property="num" column="num"/>
+		<association property="order" column="orderId" select="com.jiabin.dao.OrderDao.findById"></association>
+		<association property="book" column="bookId" select="com.jiabin.dao.BookDao.findById"></association>
+	</resultMap>
+	
+	<select id="find" parameterType="Map" resultMap="OrderBookResult">
+		select * from t_order_book
+		<where>
+			<if test="bookId!=null">
+				and bookId = #{bookId}
+			</if>
+			<if test="orderId!=null">
+				and orderId = #{orderId}
+			</if>
+		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	
+	<select id="getTotal" parameterType="Map" resultType="Long">
+		select count(*) from t_order_book
+		<where>
+			<if test="bookId!=null">
+				and bookId = #{bookId}
+			</if>
+			<if test="orderId!=null">
+				and orderId = #{orderId}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="add" parameterType="OrderBook">
+		insert into t_order_book values(null,#{num},#{order.id},#{book.id})
+	</insert>
+	
+	<insert id="addByBatch" parameterType="java.util.List">
+        insert into t_order_book 
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (null,#{item.num},#{item.order.id},#{item.book.id})
+        </foreach>
+    </insert>
+	
+	<update id="update" parameterType="OrderBook">
+		update t_order_book
+		<set>
+			<if test="bookId!=null">
+				bookId=#{bookId},
+			</if>
+			<if test="orderId!=null">
+				orderId=#{orderId},
+			</if>
+			<if test="num!=null">
+				num=#{num},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from t_order_book where id=#{id}
+	</delete>
+	
+	<select id="findById" parameterType="Integer" resultMap="OrderBookResult">
+		select * from t_order_book where id=#{id}
+	</select>
+	
+</mapper> 

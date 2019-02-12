@@ -1,0 +1,77 @@
+.block{
+	width: 1200px;
+	margin-top: 10px;
+}
+.navbar-brand img{
+	height: 50px;
+}
+.carousel-inner .item a img{
+	height: 325px;
+}
+.panel-default > .panel-heading{
+	background-color: #ED7900;
+}
+.list-group > .list-group-item a:hover{
+	text-decoration: none;
+}
+.list-group > .list-group-item a:focus{
+	text-decoration: none;
+}
+.thumbnail a img{
+	height: 160px;
+}
+.thumbnail .caption{
+	text-align: center;
+	height: 85px;
+}
+.my-col-left{
+	padding-left: 0px;
+}
+.my-col-right{
+	padding-right: 0px;
+}
+.message{
+	margin-bottom: 10px;
+}
+.carousel-caption a{
+	text-decoration: none;
+}
+hr{
+	margin-top: 5px;
+	margin-bottom: 13px;
+}
+.price{
+	color: #c00;
+	font-weight: bold;
+	font-size: 24px;
+}
+.img-detail{
+	height:315px;
+}
+.navbar-brand{
+	padding: 0px;
+}
+.breadcrumb{
+	background-color: #ED7900;
+}
+.breadcrumb li a{
+	color: #FFF;
+	text-decoration: none;
+}
+.panel-title a{
+	color: #FFF;
+	text-decoration: none;
+}
+.imgs{
+	width: 80px;
+	height: 80px;
+}
+.list td { padding:5px; border-top:1px solid #dfc9b2; }
+.container{
+	width: 1200px;
+	padding-left: 0;
+	padding-right: 0;
+}
+.media .media-left img{
+	height: 100px;
+}

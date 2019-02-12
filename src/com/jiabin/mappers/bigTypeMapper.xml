@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiabin.dao.BigTypeDao">
+
+	<resultMap type="BigType" id="BigTypeResult">
+		<result property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="remarks" column="remarks"/>
+		<collection property="smallTypeList" ofType="SmallType" column="id">  
+            <id column="sid" property="id"/><!-- 这里的column对应的是下面查询的别名，而不是表字段名 -->  
+            <result column="sname" property="name"/><!-- property对应JavaBean中的属性名 -->  
+            <result column="sremark" property="remarks"/><!-- property对应JavaBean中的属性名 -->  
+        </collection>
+	</resultMap>
+	
+	<select id="find" parameterType="Map" resultMap="BigTypeResult">
+		select b.id,b.name,b.remarks,s.id sid,s.name sname,s.remarks sremark from t_bigType b left join t_smallType s on b.id=s.bigTypeId
+		<where>
+			<if test="name!=null and name!=''">
+				and b.name like #{name}
+			</if>
+		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	
+	<select id="getTotal" parameterType="Map" resultType="Long">
+		select count(*) from t_bigType b left join t_smallType s on b.id=s.bigTypeId
+		<where>
+			<if test="name!=null and name!=''">
+				and b.name like #{name}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="add" parameterType="BigType">
+		insert into t_bigType values(null,#{name},#{remarks})
+	</insert>
+	
+	<update id="update" parameterType="BigType">
+		update t_bigType
+		<set>
+			<if test="name!=null and name!=''">
+				name=#{name},
+			</if>
+			<if test="remarks!=null and remarks!=''">
+				remarks=#{remarks},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from t_bigType where id=#{id}
+	</delete>
+	
+	<select id="findById" parameterType="Integer" resultMap="BigTypeResult">
+		select b.id,b.name,b.remarks,s.id sid,s.name sname,s.remarks sremark from t_bigType b left join t_smallType s on b.id=s.bigTypeId 
+		where b.id=#{id}
+	</select>
+	
+</mapper> 

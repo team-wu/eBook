@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiabin.dao.BookDao">
+
+	<resultMap type="Book" id="BookResult">
+		<result property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="author" column="author"/>
+		<result property="isbn" column="isbn"/>
+		<result property="price" column="price"/>
+		<result property="press" column="press"/>
+		<result property="publishTime" column="publishTime"/>
+		<result property="kaiben" column="kaiben"/>
+		<result property="mulu" column="mulu"/>
+		<result property="description" column="description"/>
+		<result property="slide" column="slide"/>
+		<result property="yeshu" column="yeshu"/>
+		<result property="zishu" column="zishu"/>
+		<result property="pic" column="pic"/>
+		<result property="click" column="click"/>
+		<result property="stock" column="stock"/>
+		<association property="smallType" column="smallTypeId" select="com.jiabin.dao.SmallTypeDao.findById"></association>
+	</resultMap>
+	
+	<select id="findByclick" parameterType="Map" resultMap="BookResult">
+		select * from t_book order by click desc
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	
+	<select id="find" parameterType="Map" resultMap="BookResult">
+		select * from t_book b left join t_smallType s on b.smallTypeId=s.id
+		<where>
+			<if test="name!=null and name!=''">
+				and b.name like #{name}
+			</if>
+			<if test="author!=null and author!=''">
+				and b.author like #{author}
+			</if>
+			<if test="isbn!=null and isbn!=''">
+				and b.isbn like #{isbn}
+			</if>
+			<if test="press!=null and press!=''">
+				and b.press like #{press}
+			</if>
+			<if test="smallTypeId!=null">
+				and b.smallTypeId = #{smallTypeId}
+			</if>
+			<if test="slide!=null">
+				and b.slide = #{slide}
+			</if>
+			<if test="bigTypeId!=null">
+				and s.bigTypeId = #{bigTypeId}
+			</if>
+		</where>
+		order by updateTime desc
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	
+	<select id="getTotal" parameterType="Map" resultType="Long">
+		select count(*) from t_book b left join t_smallType s on b.smallTypeId=s.id
+		<where>
+			<if test="name!=null and name!=''">
+				and b.name like #{name}
+			</if>
+			<if test="author!=null and author!=''">
+				and b.author like #{author}
+			</if>
+			<if test="isbn!=null and isbn!=''">
+				and b.isbn like #{isbn}
+			</if>
+			<if test="press!=null and press!=''">
+				and b.press like #{press}
+			</if>
+			<if test="smallTypeId!=null">
+				and b.smallTypeId = #{smallTypeId}
+			</if>
+			<if test="slide!=null">
+				and b.slide = #{slide}
+			</if>
+			<if test="bigTypeId!=null">
+				and s.bigTypeId = #{bigTypeId}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="add" parameterType="Book">
+		insert into t_book values(null,#{name},#{author},#{isbn},#{price},#{press},#{publishTime},#{kaiben},#{mulu},#{description},#{smallType.id},#{slide},#{yeshu},#{zishu},#{pic},now(),0,#{stock})
+	</insert>
+	
+	<update id="update" parameterType="Book">
+		update t_book
+		<set>
+			<if test="name!=null and name!=''">
+				name=#{name},
+			</if>
+			<if test="author!=null and author!=''">
+				author=#{author},
+			</if>
+			<if test="isbn!=null and isbn!=''">
+				isbn=#{isbn},
+			</if>
+			<if test="price!=null">
+				price=#{price},
+			</if>
+			<if test="press!=null and press!=''">
+				press=#{press},
+			</if>
+			<if test="publishTime!=null">
+				publishTime=#{publishTime},
+			</if>
+			<if test="kaiben!=null and kaiben!=''">
+				kaiben=#{kaiben},
+			</if>
+			<if test="mulu!=null and mulu!=''">
+				mulu=#{mulu},
+			</if>
+			<if test="description!=null and description!=''">
+				description=#{description},
+			</if>
+			<if test="smallType.id!=null">
+				smallTypeId=#{smallType.id},
+			</if>
+			<if test="slide!=null">
+				slide=#{slide},
+			</if>
+			<if test="yeshu!=null">
+				yeshu=#{yeshu},
+			</if>
+			<if test="zishu!=null">
+				zishu=#{zishu},
+			</if>
+			<if test="price!=null">
+				price=#{price},
+			</if>
+			<if test="pic!=null and pic!=''">
+				pic=#{pic},
+			</if>
+			<if test="updateTime!=null">
+				updateTime=#{updateTime},
+			</if>
+			<if test="click!=null">
+				click=#{click},
+			</if>
+			<if test="stock!=null">
+				stock=#{stock},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from t_book where id=#{id}
+	</delete>
+	
+	<select id="findById" parameterType="Integer" resultMap="BookResult">
+		select * from t_book where id=#{id}
+	</select>
+	
+</mapper> 

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiabin.dao.SmallTypeDao">
+
+	<resultMap type="SmallType" id="SmallTypeResult">
+		<result property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="remarks" column="remarks"/>
+		<association property="bigType" column="bigTypeId" select="com.jiabin.dao.BigTypeDao.findById"></association>
+		<collection property="bookList" ofType="Book" column="idd">  
+            <id column="bid" property="id"/><!-- 这里的column对应的是下面查询的别名，而不是表字段名 -->  
+            <id column="bname" property="name"/><!-- 这里的column对应的是下面查询的别名，而不是表字段名 -->  
+            <id column="bauthor" property="author"/><!-- 这里的column对应的是下面查询的别名，而不是表字段名 -->  
+            <id column="bisbn" property="isbn"/><!-- 这里的column对应的是下面查询的别名，而不是表字段名 -->  
+            <id column="bprice" property="price"/><!-- 这里的column对应的是下面查询的别名，而不是表字段名 -->  
+            <id column="bpress" property="press"/><!-- 这里的column对应的是下面查询的别名，而不是表字段名 -->  
+            <id column="bpublishTime" property="publishTime"/><!-- 这里的column对应的是下面查询的别名，而不是表字段名 -->  
+            <id column="bkaiben" property="kaiben"/><!-- 这里的column对应的是下面查询的别名，而不是表字段名 -->  
+            <id column="bmulu" property="mulu"/><!-- 这里的column对应的是下面查询的别名，而不是表字段名 -->  
+            <id column="bdescription" property="description"/><!-- 这里的column对应的是下面查询的别名，而不是表字段名 -->  
+            <id column="slide" property="slide"/><!-- 这里的column对应的是下面查询的别名，而不是表字段名 -->  
+            <id column="yeshu" property="yeshu"/><!-- 这里的column对应的是下面查询的别名，而不是表字段名 -->  
+            <id column="zishu" property="zishu"/><!-- 这里的column对应的是下面查询的别名，而不是表字段名 -->  
+            <id column="pic" property="pic"/><!-- 这里的column对应的是下面查询的别名，而不是表字段名 -->  
+            <id column="click" property="click"/><!-- 这里的column对应的是下面查询的别名，而不是表字段名 -->  
+        </collection>
+	</resultMap>
+	
+	<select id="find" parameterType="Map" resultMap="SmallTypeResult">
+		select *, 
+			b.id bid,
+			b.name bname, 
+			b.author bauthor, 
+			b.isbn bisbn, 
+			b.price bprice, 
+			b.press bpress, 
+			b.publishTime bpublishTime, 
+			b.kaiben bkaiben, 
+			b.mulu bmulu, 
+			b.description bdescription,
+			b.slide slide,
+			b.yeshu yeshu,
+			b.zishu zishu,
+			b.pic pic,
+			b.click click
+			from t_smallType s left join t_book b on s.id=b.smallTypeId
+		<where>
+			<if test="name!=null and name!=''">
+				and s.name like #{name}
+			</if>
+			<if test="bigTypeId!=null">
+				and s.bigTypeId like #{bigTypeId}
+			</if>
+		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	
+	<select id="getTotal" parameterType="Map" resultType="Long">
+		select count(*) from t_smallType s left join t_book b on s.id=b.smallTypeId
+		<where>
+			<if test="name!=null and name!=''">
+				and s.name like #{name}
+			</if>
+			<if test="bigTypeId!=null">
+				and s.bigTypeId like #{bigTypeId}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="add" parameterType="SmallType">
+		insert into t_smallType values(null,#{name},#{remarks},#{bigType.id})
+	</insert>
+	
+	<update id="update" parameterType="SmallType">
+		update t_smallType
+		<set>
+			<if test="name!=null and name!=''">
+				name=#{name},
+			</if>
+			<if test="remarks!=null and remarks!=''">
+				remarks=#{remarks},
+			</if>
+			<if test="bigType.id!=null">
+				bigTypeId=#{bigType.id},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from t_smallType where id=#{id}
+	</delete>
+	
+	<select id="findById" parameterType="Integer" resultMap="SmallTypeResult">
+		select * from t_smallType where id=#{id}
+	</select>
+	
+</mapper> 

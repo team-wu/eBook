@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiabin.dao.OrderDao">
+
+	<resultMap type="Order" id="OrderResult">
+		<result property="id" column="id"/>
+		<result property="orderNo" column="orderNo"/>
+		<result property="createTime" column="createTime"/>
+		<result property="cost" column="cost"/>
+		<result property="status" column="status"/>
+		<association property="user" column="userId" select="com.jiabin.dao.UserDao.findById"></association>
+		<collection property="orderBookList" ofType="OrderBook" column="orderId">  
+            <id column="obid" property="id"/><!-- 这里的column对应的是下面查询的别名，而不是表字段名   -->
+            <result column="obnum" property="num"/><!-- property对应JavaBean中的属性名   -->
+            <association property="book" column="bid" select="com.jiabin.dao.BookDao.findById"></association>
+            <association property="order" column="id" select="com.jiabin.dao.OrderDao.findById"></association>
+        </collection>
+	</resultMap>
+	
+	<select id="find" parameterType="Map" resultMap="OrderResult">
+		select *,ob.id obid,ob.num obnum,ob.bookId bid from t_order o left join t_order_book ob on o.id=ob.orderId
+		<where>
+			<if test="orderNo!=null and orderNo!=''">
+				and o.orderNo like #{orderNo}
+			</if>
+			<if test="userId!=null">
+				and o.userId = #{userId}
+			</if>
+			<if test="status!=null">
+				and o.status = #{status}
+			</if>
+		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	
+	<select id="getTotal" parameterType="Map" resultType="Long">
+		select count(*) from t_order o left join t_order_book ob on o.id=ob.orderId
+		<where>
+			<if test="orderNo!=null and orderNo!=''">
+				and o.orderNo like #{orderNo}
+			</if>
+			<if test="userId!=null">
+				and o.userId = #{userId}
+			</if>
+			<if test="status!=null">
+				and o.status = #{status}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="add" useGeneratedKeys="true" keyProperty="id" parameterType="Order">
+		insert into t_order values(null,#{cost},#{createTime},#{orderNo},#{status},#{user.id})
+	</insert>
+	
+	<update id="update" parameterType="Order">
+		update t_order
+		<set>
+			<if test="status!=null">
+				status=#{status},
+			</if>
+			<if test="cost!=null">
+				cost=#{cost},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from t_order where id=#{id}
+	</delete>
+	
+	<select id="findById" parameterType="Integer" resultMap="OrderResult">
+		select *,ob.id obid,ob.num obnum,ob.bookId bid
+		from t_order o left join t_order_book ob on o.id=ob.orderId 
+		where o.id=#{id}
+	</select>
+	
+	<select id="findByOrderNo" parameterType="String" resultMap="OrderResult">
+		select * from t_order where orderNo=#{orderNo}
+	</select>
+	
+</mapper> 

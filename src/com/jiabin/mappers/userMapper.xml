@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiabin.dao.UserDao">
+
+	<resultMap type="User" id="UserResult">
+		<result property="id" column="id"/>
+		<result property="trueName" column="trueName"/>
+		<result property="userName" column="userName"/>
+		<result property="password" column="password"/>
+		<result property="sex" column="sex"/>
+		<result property="birthday" column="birthday"/>
+		<result property="identityCode" column="identityCode"/>
+		<result property="email" column="email"/>
+		<result property="mobile" column="mobile"/>
+		<result property="address" column="address"/>
+		<result property="status" column="status"/>
+		<collection property="orderList" ofType="Order" column="id"><!-- id是order表的主键 -->  
+            <id column="oid" property="id"/><!-- 这里的column对应的是下面查询的别名，而不是表字段名 -->  
+            <result column="oorderNo" property="orderNo"/><!-- property对应JavaBean中的属性名 -->  
+            <result column="ocreateTime" property="createTime"/><!-- property对应JavaBean中的属性名 -->  
+            <result column="ocost" property="cost"/><!-- property对应JavaBean中的属性名 -->  
+            <result column="ostatus" property="status"/><!-- property对应JavaBean中的属性名 -->  
+        </collection>
+	</resultMap>
+	
+	<select id="login" parameterType="Map" resultMap="UserResult">
+		select * from t_user where userName=#{userName} and password=#{password} and status=2
+	</select>
+	
+	<select id="login1" parameterType="Map" resultMap="UserResult">
+		select * from t_user where userName=#{userName} and password=#{password} and status=1
+	</select>
+	
+	<select id="find" parameterType="Map" resultMap="UserResult">
+		select *,o.orderNo oorderNo,o.createTime ocreateTime,o.cost ocost,o.status ostatus from t_user u left join t_order o on u.id=o.userId
+		<where>
+			<if test="trueName!=null and trueName!=''">
+				and u.trueName like #{trueName}
+			</if>
+			<if test="userName!=null and userName!=''">
+				and u.userName like #{userName}
+			</if>
+			<if test="sex!=null">
+				and u.sex like #{sex}
+			</if>
+			<if test="identityCode!=null and identityCode!=''">
+				and u.identityCode like #{identityCode}
+			</if>
+			<if test="email!=null and email!=''">
+				and u.email like #{email}
+			</if>
+			<if test="mobile!=null and mobile!=''">
+				and u.mobile like #{mobile}
+			</if>
+			<if test="status!=null">
+				and u.status like #{status}
+			</if>
+		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	
+	<select id="list" parameterType="Map" resultMap="UserResult">
+		select * from t_user
+		<where>
+			<if test="userName!=null and userName!=''">
+				and userName like #{userName}
+			</if>
+		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	
+	<select id="getTotal2" parameterType="Map" resultType="Long">
+		select count(*) from t_user
+		<where>
+			<if test="userName!=null and userName!=''">
+				and userName like #{userName}
+			</if>
+		</where>
+	</select>
+	
+	<select id="getTotal" parameterType="Map" resultType="Long">
+		select count(*) from t_user u left join t_order o on u.id=o.userId
+		<where>
+			<if test="trueName!=null and trueName!=''">
+				and u.trueName like #{trueName}
+			</if>
+			<if test="userName!=null and userName!=''">
+				and u.userName like #{userName}
+			</if>
+			<if test="sex!=null">
+				and u.sex like #{sex}
+			</if>
+			<if test="identityCode!=null and identityCode!=''">
+				and u.identityCode like #{identityCode}
+			</if>
+			<if test="email!=null and email!=''">
+				and u.email like #{email}
+			</if>
+			<if test="mobile!=null and mobile!=''">
+				and u.mobile like #{mobile}
+			</if>
+			<if test="status!=null">
+				and u.status like #{status}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="add" parameterType="User">
+		insert into t_user values(null,#{trueName},#{userName},#{password},#{sex},#{birthday},#{identityCode},#{email},#{mobile},#{address},#{status})
+	</insert>
+	
+	<update id="update" parameterType="User">
+		update t_user
+		<set>
+			<if test="trueName!=null and trueName!=''">
+				trueName=#{trueName},
+			</if>
+			<if test="userName!=null and userName!=''">
+				userName=#{userName},
+			</if>
+			<if test="password!=null and password!=''">
+				password=#{password},
+			</if>
+			<if test="sex!=null and sex!=''">
+				sex=#{sex},
+			</if>
+			<if test="birthday!=null">
+				birthday=#{birthday},
+			</if>
+			<if test="identityCode!=null and identityCode!=''">
+				identityCode=#{identityCode},
+			</if>
+			<if test="email!=null and email!=''">
+				email=#{email},
+			</if>
+			<if test="mobile!=null and mobile!=''">
+				mobile=#{mobile},
+			</if>
+			<if test="address!=null and address!=''">
+				address=#{address},
+			</if>
+			<if test="status!=null and status!=''">
+				status=#{status},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from t_user where id=#{id}
+	</delete>
+	
+	<select id="findById" parameterType="Integer" resultMap="UserResult">
+		select * from t_user where id=#{id}
+	</select>
+	
+</mapper> 
